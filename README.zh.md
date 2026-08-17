@@ -11,7 +11,7 @@
 ## 安装
 
 ```sh
-dsh plugin --profile web add dsh-llm-balance
+dsh plugin --profile web add github:JonyChan8394/dsh-llm-balance
 ```
 
 重启 `dsh web`。只要至少一个配置的 provider 配了密钥，聊天输入框下方就会出现余额条。
