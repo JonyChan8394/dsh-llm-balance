@@ -1,7 +1,7 @@
 {
   "name": "dsh-llm-balance",
-  "version": "0.4.0",
-  "description": "LLM API balances below the chat input, driven by the providers configured in dsh (DeepSeek, Qwen/DashScope, Kimi, etc.) with no-API labels for providers without a balance endpoint.",
+  "version": "0.5.0",
+  "description": "LLM API balances below the chat input, driven by the providers configured in dsh; click a balance to open its recharge page.",
   "type": "module",
   "repository": {
     "type": "git",
