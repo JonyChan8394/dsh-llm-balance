@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "Show LLM API balances under the chat input: DeepSeek, OpenRouter, SiliconFlow and any custom provider with a balance endpoint.",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JonyChan8394/dsh-llm-balance.git"
+  },
+  "homepage": "https://github.com/JonyChan8394/dsh-llm-balance#readme",
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
