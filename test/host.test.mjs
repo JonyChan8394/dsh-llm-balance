@@ -18,7 +18,7 @@ const { Config, apply } = await import(pathToFileURL(path.join(repoRoot, 'lib/in
 // 1. config defaults
 const config = Schema.resolve({}, Config)[0]
 const ids = config.endpoints.map((e) => e.id)
-for (const expect of ['deepseek-official', 'deepseek', 'openrouter', 'siliconflow', 'moonshot', 'minimax', 'stepfun', 'zhipu']) {
+for (const expect of ['deepseek-official', 'deepseek', 'openrouter', 'siliconflow', 'moonshotai-cn', 'moonshotai', 'minimax', 'stepfun', 'zhipu']) {
   if (!ids.includes(expect)) throw new Error('missing endpoint preset ' + expect)
 }
 console.log('endpoints ok:', ids.join(', '), '| refreshMs', config.refreshMs)
