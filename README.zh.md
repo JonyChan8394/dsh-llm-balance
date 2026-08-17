@@ -5,11 +5,9 @@
 在聊天输入框正下方显示你所有 LLM API 账户的余额。
 
 - **输入框正下方** —— 输入卡片底部的 footer 条（统计行所在的座位），自动刷新（默认每 60 秒），带手动刷新链接。
-- **任意 LLM API** —— provider 完全配置驱动。内置 DeepSeek、OpenRouter、SiliconFlow、Moonshot/Kimi、MiniMax、StepFun、Zhipu/GLM 预设；任何提供余额接口的服务都可以通过 JSON 点路径接入。
-- **只显示你配置的** —— 没配密钥的 provider 自动隐藏，余额条只展示你真正接入的账户。
+- **凭据自动探测** —— 每次刷新自动探测已知 provider 的凭据引用（`DEEPSEEK_API_KEY`、`OPENROUTER_API_KEY` 等）。在 Models 设置里添加或删除 key，下次刷新余额条就自动跟随——无需重启、无需改配置。
+- **没有公开余额 API？** —— Qwen/DashScope、OpenAI、Anthropic 等有公开 API key 但没有公开的余额查询接口。当它们的 key 被配置时，余额条会显示「未开放查询API」而不是隐藏它们。
 - **密钥留在宿主机** —— API key 只在宿主机侧从 DSH 凭据（或环境变量）解析，浏览器只会看到拉取到的余额。
-
-> **Qwen / 通义千问（阿里云百炼 DashScope）没有公开的余额 API**——余额只能在阿里云控制台查看，因此没有内置预设。如果你通过有余额接口的聚合商使用 Qwen（如 OpenRouter、SiliconFlow），请配置那个 provider 即可显示。
 
 ## 安装
 
@@ -21,31 +19,28 @@ dsh plugin --profile web add github:JonyChan8394/dsh-llm-balance
 
 ## 配置
 
-把 API key 加到 DSH 凭据（或环境变量）：
+只需把 API key 加到 DSH 凭据（或环境变量）——其余全部自动：
 
-| Provider | 凭据引用 |
-| --- | --- |
-| DeepSeek | `DEEPSEEK_API_KEY` |
-| OpenRouter | `OPENROUTER_API_KEY` |
-| SiliconFlow | `SILICONFLOW_API_KEY` |
-| Moonshot / Kimi | `MOONSHOT_API_KEY` |
-| MiniMax | `MINIMAX_API_KEY` |
-| StepFun | `STEP_API_KEY` |
-| Zhipu / GLM | `ZHIPU_API_KEY` |
+| Provider | 凭据引用 | 余额 API |
+| --- | --- | --- |
+| DeepSeek | `DEEPSEEK_API_KEY` | ✅ |
+| OpenRouter | `OPENROUTER_API_KEY` | ✅ |
+| SiliconFlow | `SILICONFLOW_API_KEY` | ✅ |
+| Moonshot / Kimi | `MOONSHOT_API_KEY` | ✅ |
+| MiniMax | `MINIMAX_API_KEY` | ✅ |
+| StepFun | `STEP_API_KEY` | ✅ |
+| Zhipu / GLM | `ZHIPU_API_KEY` | ✅ |
+| Qwen / DashScope | `DASHSCOPE_API_KEY` | ❌（仅控制台） |
+| OpenAI | `OPENAI_API_KEY` | ❌ |
+| Anthropic | `ANTHROPIC_API_KEY` | ❌ |
 
-想增加或自定义 provider，在 profile 的 `cordis.patch.yml` 里覆盖插件配置：
+想接入列表之外的 provider（比如有自己的余额接口的聚合商），在 profile 的 `cordis.patch.yml` 里覆盖插件配置：
 
 ```yaml
 - id: llm-balance
   config:
     refreshMs: 30000
     providers:
-      - id: deepseek
-        name: DeepSeek
-        apiKeyRef: DEEPSEEK_API_KEY
-        url: https://api.deepseek.com/user/balance
-        balancePath: balance_infos.0.total_balance
-        currencyPath: balance_infos.0.currency
       - id: myprovider
         name: MyProvider
         apiKeyRef: MYPROVIDER_API_KEY
@@ -58,7 +53,7 @@ dsh plugin --profile web add github:JonyChan8394/dsh-llm-balance
 
 ## 工作原理
 
-- **宿主机半**（`lib/index.js`）通过 `ctx.credentials` 解析每个 provider 的 key，调用其余额接口，并通过 webserver 路由注册表提供 `GET /llm-balance` JSON。
+- **宿主机半**（`lib/index.js`）在每次请求时通过 `ctx.credentials` 探测所有已知凭据引用，调用已配置 provider 的余额接口，并通过 webserver 路由注册表提供 `GET /llm-balance` JSON。有 key 但没有余额接口的 provider 返回 `error: 'no-api'`。
 - **浏览器半**（`lib/client.js`）注册一个 `conversation.composer.dock` 条目（order 10），轮询 `/llm-balance` 并在输入卡片下方渲染余额条。
 
 ## License
