@@ -1,5 +1,5 @@
 // Client-half test: the bundle registers through window.__ModuleLoader__.load,
-// apply() injects a conversation.input.dock entry, and the dock renders.
+// apply() injects a conversation.composer.dock entry, and the dock renders.
 // No DOM needed — react is stubbed.
 // Run: node test/client.test.mjs
 import fs from 'node:fs'
@@ -34,13 +34,13 @@ let injected = null
 const fakeSlots = {
   inject(slot, fn) { injected = { slot, fn } },
   register(opts, Component) {
-    if (opts.name !== 'conversation.input.dock') throw new Error('wrong slot: ' + opts.name)
-    if (opts.order !== 30) throw new Error('wrong order: ' + opts.order)
+    if (opts.name !== 'conversation.composer.dock') throw new Error('wrong slot: ' + opts.name)
+    if (opts.order !== 10) throw new Error('wrong order: ' + opts.order)
     const rendered = Component({ t: (k) => k })
     if (!rendered || !rendered.children) throw new Error('dock did not render')
   },
 }
 mod.apply({ slots: fakeSlots, locale: { register() {} }, effect: (fn) => fn() })
-if (!injected || injected.slot !== 'conversation.input.dock') throw new Error('dock not injected')
+if (!injected || injected.slot !== 'conversation.composer.dock') throw new Error('dock not injected')
 injected.fn()
 console.log('CLIENT TEST OK')
