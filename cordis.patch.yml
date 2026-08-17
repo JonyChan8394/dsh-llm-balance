@@ -1,0 +1,22 @@
+# dsh-llm-balance bundle patch: mounts the plugin into a dsh profile
+# composition. The host half registers an exact /llm-balance route; the
+# browser half (same package, dsh.client) renders the balance strip under the
+# chat input.
+#
+# Install: `dsh plugin --profile web add dsh-llm-balance`
+- insert:
+    - id: llm-balance
+      name: dsh-llm-balance
+      config:
+        # How often the browser refreshes balances (ms).
+        # refreshMs: 60000
+        # Providers are config-driven — add any LLM API with a balance
+        # endpoint. Each entry: id, name, apiKeyRef (credential/env name),
+        # url, balancePath (dotted JSON path), optional currencyPath.
+        # providers:
+        #   - id: deepseek
+        #     name: DeepSeek
+        #     apiKeyRef: DEEPSEEK_API_KEY
+        #     url: https://api.deepseek.com/user/balance
+        #     balancePath: balance_infos.0.total_balance
+        #     currencyPath: balance_infos.0.currency
