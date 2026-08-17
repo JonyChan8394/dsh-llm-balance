@@ -19,15 +19,16 @@ const ids = config.providers.map((p) => p.id)
 if (!ids.includes('deepseek')) throw new Error('missing deepseek preset')
 console.log('config ok:', ids.join(', '), '| refreshMs', config.refreshMs)
 
-// 2. route registration
+// 2. route registration (apply now takes webServer via inject -> ctx.webServer)
 let captured = null
 const webServer = { register(route) { captured = route; return () => {} } }
 const credentials = {
   async resolve() { return undefined },
 }
 const ctx = {
+  webServer,
   effect: (fn) => fn(),
-  get: (name) => (name === 'webServer' ? webServer : name === 'credentials' ? credentials : undefined),
+  get: (name) => (name === 'credentials' ? credentials : undefined),
 }
 apply(ctx, config)
 if (!captured || captured.kind !== 'exact' || captured.path !== '/llm-balance') throw new Error('route not registered as exact /llm-balance')
@@ -48,11 +49,9 @@ try {
   const yaml = fs.readFileSync(credPath, 'utf8')
   const keyOf = (ref) => { const m = yaml.match(new RegExp(ref + ':\\s*["\']?([^"\'\n]+)')); return m ? m[1].trim() : undefined }
   const liveCredentials = { async resolve(ref) { const v = keyOf(ref); return v ? { value: v, source: 'test' } : undefined } }
-  const liveCtx = { effect: (fn) => fn(), get: (name) => (name === 'webServer' ? webServer : name === 'credentials' ? liveCredentials : undefined) }
   let liveCaptured = null
   const liveServer = { register(route) { liveCaptured = route; return () => {} } }
-  const liveWebServer = liveServer
-  const ctx2 = { effect: (fn) => fn(), get: (name) => (name === 'webServer' ? liveWebServer : name === 'credentials' ? liveCredentials : undefined) }
+  const ctx2 = { webServer: liveServer, effect: (fn) => fn(), get: (name) => (name === 'credentials' ? liveCredentials : undefined) }
   apply(ctx2, config)
   const res2 = { status: 0, body: '', writeHead(s) { this.status = s }, end(b) { this.body = b } }
   await liveCaptured.handler({}, res2)
