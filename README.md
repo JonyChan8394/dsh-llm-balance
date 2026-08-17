@@ -11,7 +11,7 @@ Show the balances of all your LLM API accounts right under the chat input box.
 ## Install
 
 ```sh
-dsh plugin --profile web add dsh-llm-balance
+dsh plugin --profile web add github:JonyChan8394/dsh-llm-balance
 ```
 
 Restart `dsh web`. The balance strip appears under the chat input as soon as at least one configured provider has a key.
