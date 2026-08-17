@@ -16,7 +16,9 @@ const { Config, apply } = await import(pathToFileURL(path.join(repoRoot, 'lib/in
 // 1. config defaults
 const config = Schema.resolve({}, Config)[0]
 const ids = config.providers.map((p) => p.id)
-if (!ids.includes('deepseek')) throw new Error('missing deepseek preset')
+for (const expect of ['deepseek', 'openrouter', 'siliconflow', 'moonshot', 'minimax', 'stepfun', 'zhipu']) {
+  if (!ids.includes(expect)) throw new Error('missing preset ' + expect)
+}
 console.log('config ok:', ids.join(', '), '| refreshMs', config.refreshMs)
 
 // 2. route registration (apply now takes webServer via inject -> ctx.webServer)
