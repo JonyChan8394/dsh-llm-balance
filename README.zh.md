@@ -5,6 +5,7 @@
 在聊天输入框正下方，显示你在 dsh 里**实际配置的**那些 LLM 账户的余额——不多不少。
 
 - **输入框正下方** —— 输入卡片底部的 footer 条（统计行所在的座位），自动刷新（默认每 60 秒），带手动刷新链接。
+- **点击直达充值** —— 点击任意 provider 的余额（或「未开放查询API」字样），会在新浏览器标签页打开该家 LLM 的充值/控制台页面。
 - **跟随你的 dsh 配置** —— 余额条只显示 dsh 里已注册的 provider（Models 页面 / `llm-pi-ai` 设置 + 你在用的内置适配器）。在 dsh 里新增一个 LLM，下次刷新就出现；删掉就消失。无需重启、无需改插件配置。
 - **没有公开余额 API？** —— Qwen/DashScope、OpenAI、Anthropic 等有公开 API key 但没有公开的余额查询接口。当这类 provider 配了 key 时，余额条会显示「未开放查询API」而不是隐藏它。
 - **密钥留在宿主机** —— API key 只在宿主机侧从 DSH 凭据（或环境变量）解析，浏览器只会看到拉取到的余额。
@@ -26,13 +27,13 @@ dsh plugin --profile web add github:JonyChan8394/dsh-llm-balance
 | DeepSeek（`deepseek`、`deepseek-official`） | ✅ |
 | OpenRouter（`openrouter`） | ✅ |
 | SiliconFlow（`siliconflow`） | ✅ |
-| Moonshot / Kimi（`moonshot`） | ✅ |
+| Moonshot / Kimi（`moonshotai-cn`、`moonshotai`） | ✅ |
 | MiniMax（`minimax`） | ✅ |
 | StepFun（`stepfun`） | ✅ |
 | Zhipu / GLM（`zhipu`） | ✅ |
 | 其他已配置的 provider | ❌ 显示「未开放查询API」 |
 
-想给列表之外的 provider（比如有自己的余额接口的聚合商 route）加余额端点，在 profile 的 `cordis.patch.yml` 里覆盖插件配置：
+每个预设都带 `rechargeUrl`（该家充值页）——点击余额条里的 provider 就在新标签页打开。想给列表之外的 provider（比如有自己的余额接口的聚合商 route）加余额端点，在 profile 的 `cordis.patch.yml` 里覆盖插件配置：
 
 ```yaml
 - id: llm-balance
@@ -45,6 +46,7 @@ dsh plugin --profile web add github:JonyChan8394/dsh-llm-balance
         url: https://api.example.com/v1/balance
         balancePath: data.remaining
         currencyPath: data.currency
+        rechargeUrl: https://console.example.com/recharge
 ```
 
 没配密钥的 provider 自动隐藏；请求失败的显示「获取失败」。
