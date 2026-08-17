@@ -1,7 +1,7 @@
 {
   "name": "dsh-llm-balance",
-  "version": "0.2.0",
-  "description": "Show LLM API balances below the chat input: DeepSeek, OpenRouter, SiliconFlow, Moonshot, MiniMax, StepFun, Zhipu and any custom provider with a balance endpoint.",
+  "version": "0.3.0",
+  "description": "Auto-discovered LLM API balances below the chat input: DeepSeek, OpenRouter, SiliconFlow, Moonshot, MiniMax, StepFun, Zhipu, plus no-API providers like Qwen/DashScope.",
   "type": "module",
   "repository": {
     "type": "git",
